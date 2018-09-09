@@ -97,18 +97,20 @@ function Plugin:CanPlayerHearPlayer( Gamerules, Listener, Speaker )
 	local result = (TeamToHear == 4) or (TeamToHear == SpeakerTeam)
 	return result
 end
+/*
 function Plugin:PostJoinTeam( Gamerules, Player, OldTeam, NewTeam, Force, ShineForce )
 	
 	-- player joined spectators
-	if NewTeam == 3 then
+	--if NewTeam == 3 then
 
 		--if (Plugin.Config.SendMessageOnJoinSpec) then
-			Plugin:Notify( Client, "%s", true, Plugin.Config.JoinSpecMessage )
+		--	Plugin:Notify( Client, "%s", true, Plugin.Config.JoinSpecMessage )
 		--end
 
-		return
-	end
+		--return
+	--end
 end
+*/
 
 --EnforceTeamSize plugin
 function Plugin:JoinTeam(gamerules, player, newteam, force, ShineForce)

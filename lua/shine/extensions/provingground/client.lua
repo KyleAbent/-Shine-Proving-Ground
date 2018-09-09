@@ -60,11 +60,11 @@ end
 			Client.ShowWebpage( "https://discordapp.com/invite/qBKdVZQ" )
 		end )
 		 local player = Client.GetLocalPlayer()
-		   if player:GetTeamNumber() == 3 then 
+		  -- if player:GetTeamNumber() == 3 then 
 		self:AddSideButton( "Spec Voice", function()
 			self:SetPage( "Spec Voice" )
 		end )
-		end
+		--end
 		
 
 
