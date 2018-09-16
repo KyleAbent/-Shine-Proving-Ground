@@ -25,7 +25,36 @@ end
 
 function Plugin:CreateCommands()
 
+	local function QueueTeam( Client, Targets, Team )
+		local Gamerules = GetGamerules()
+		if not Gamerules then return end
 
+		local TargetCount = #Targets
+		if TargetCount == 0 then return end
+
+		for i = 1, TargetCount do
+			local Player = Targets[ i ]:GetControllingPlayer()
+
+			if Player then 
+                if Player:GetTeamNumber() == 0 then
+                Shine:NotifyDualColour( Player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Congratulations! You're the priority in the *blank* Team Queue!" )
+				Gamerules:JoinTeam( Player, Team, nil, true )
+				else
+                Shine:NotifyDualColour( Player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Doh! You've joined a team queue then joined a team. You would have been chosen if in RR!" )
+                end
+			end
+		end
+
+		self:SendTranslatedMessage( Client, "ChangeTeam", {
+			TargetCount = TargetCount,
+			Team = Team
+		} )
+	end
+	local ChangeTeamCommand = self:BindCommand( "sh_queueteam", "queueteam" , QueueTeam )
+	ChangeTeamCommand:AddParam{ Type = "clients" }
+	ChangeTeamCommand:AddParam{ Type = "team", Error = "Please specify a team to move to." }
+    ChangeTeamCommand:Help( "Sets the given player(s) onto the given team." )
+ 
 end
 
 
@@ -94,7 +123,7 @@ function Plugin:checkAndClearQueue(player, newteam)
 end
 */
  function Plugin:findNextPriority(num) --if teamsize <12
-    Print("findNextPriority")
+   -- Print("findNextPriority")
     local lowestPriority = 999
     local toChange
     local Gamerules = GetGamerules()
@@ -104,14 +133,14 @@ end
                    for i = 1, #self.marineQueue do
                       local currentPriority = self.marineQueue[i]
                       Print("currentPriority is %s", currentPriority)
-                      if currentPriority.steamID ~= -1 and currentPriority.priority < lowestPriority then
-                         lowestPriority = currentPriority
+                      if currentPriority.steamID ~= -1 and currentPriority.priority < lowestPriority  then
+                         lowestPriority = currentPriority.priority
                          toChange = currentPriority
                          index = currentPriority.priority
                       end
                    end
         if lowestPriority == 999 then return end
-        if self.marineQueue[index].plyr:GetControllingPlayer():GetTeamNumber() == 0 then  Shared.ConsoleCommand(string.format("sh_setteam %s 1", self.marineQueue[index].steamID ))  end
+        Shared.ConsoleCommand(string.format("sh_queueteam %s 1", self.marineQueue[index].steamID )) 
         Shine:NotifyDualColour( self.marineQueue[index].plyr, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Congratulations! You're the priority in the Marine Team Queue!" )
         Shine:NotifyDualColour( self.marineQueue[index].plyr, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been removed from the Marine Team Queue" )
         marinePlaceInQueue = marinePlaceInQueue - 1 
@@ -121,15 +150,14 @@ end
                    for i = 1, #self.alienQueue do
                       local currentPriority = self.alienQueue[i]
                        Print("currentPriority is %s", currentPriority)
-                      if currentPriority.steamID ~= -1 and currentPriority.priority  < lowestPriority then
-                         lowestPriority = currentPriority
+                      if currentPriority.steamID ~= -1 and currentPriority.priority  < lowestPriority   then
+                         lowestPriority = currentPriority.priority
                          toChange = currentPriority
                          index = currentPriority.priority
                       end
                    end
         if lowestPriority == 999 then return end      
-        if self.alienQueue[index].plyr:GetControllingPlayer():GetTeamNumber() == 1 then  Shared.ConsoleCommand(string.format("sh_setteam %s 2", self.alienQueue[index].steamID ))
-        Shine:NotifyDualColour( self.alienQueue[index].plyr, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Congratulations! You're the priority in the Alien Team Queue!" )
+        Shared.ConsoleCommand(string.format("sh_queueteam %s 2", self.alienQueue[index].steamID ))
         Shine:NotifyDualColour( self.alienQueue[index].plyr, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been removed from the Alien Team Queue" )
         alienPlaceInQueue = alienPlaceInQueue - 1
         self.alienQueue[index] = { steamID = -1, 9999 }  
@@ -139,19 +167,20 @@ end
                       local currentPriority = self.spectQueue[i]
                        Print("currentPriority is %s", currentPriority)
                       if currentPriority.steamID ~= -1 and currentPriority.priority  < lowestPriority then
-                         lowestPriority = currentPriority
+                         lowestPriority = currentPriority.priority
                          toChange = currentPriority
                          index = currentPriority.priority
                       end
                    end
         if lowestPriority == 999 then return end               
-        if self.spectQueue[index].plyr:GetControllingPlayer():GetTeamNumber() == 0 then  Shared.ConsoleCommand(string.format("sh_setteam %s 3", self.spectQueue[index].steamID ))
-        Shine:NotifyDualColour( self.spectQueue[index].plyr, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Congratulations! You're the priority in the Spectate Team Queue!" )
+        Shared.ConsoleCommand(string.format("sh_queueteam %s 3", self.spectQueue[index].steamID ))
         Shine:NotifyDualColour( self.spectQueue[index].plyr, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been removed from the Spectator Team Queue" )
         spectPlaceInQueue = spectPlaceInQueue - 1
         self.spectQueue[index] = { steamID = -1, 9999 }
-        end
+    end
         
+        
+
     --lower everyones priority down 1?
      
 end
@@ -173,7 +202,7 @@ function Plugin:JoinTeam(gamerules, player, newteam, force, ShineForce)
     
     local AlienCount = gamerules:GetTeam2():GetNumPlayers()
     local MarineCount = gamerules:GetTeam1():GetNumPlayers()
-    local SpectCount = gamerules:GetTeam3():GetNumPlayers()
+--    local SpectCount = gamerules:GetTeam3():GetNumPlayers()
     
     if MarineCount < 12 then
     self:findNextPriority(1)
@@ -183,9 +212,9 @@ function Plugin:JoinTeam(gamerules, player, newteam, force, ShineForce)
     self:findNextPriority(2)
     end
       
-    if SpectCount < 6 then
+    --if SpectCount < 6 then
     self:findNextPriority(3)
-    end
+    --end
  
     if newteam == 2 then
 
