@@ -263,6 +263,27 @@ end
 
 
 function Plugin:ClientDisconnect(Client)
+  local controlling = Client:GetControllingPlayer()
+      local gamerules = GetGamerules()
+    local AlienCount = gamerules:GetTeam2():GetNumPlayers()
+    local MarineCount = gamerules:GetTeam1():GetNumPlayers()
+    local SpectCount = gamerules:GetSpectatorTeam():GetNumPlayers()
+    
+    if controlling:GetTeam() == 1 and MarineCount < 12 then
+    self:findNextPriority(1)
+    end
+     
+    if  controlling:GetTeam() == 2 and AlienCount < 12 then
+    self:findNextPriority(2)
+    end
+      
+    if  controlling:GetTeam() == 3 and SpectCount < 6 then
+    self:findNextPriority(3)
+    end
+    
+      //for loop for each queue going through and matching steamid? feels messy.
+      
+    /*
     local controlling = Client:GetControllingPlayer()
     if controlling:GetTeam() == 1 then
             if self.marineQueue[ marinePlaceInQueue ].steamID ~= -1  then
@@ -283,6 +304,7 @@ function Plugin:ClientDisconnect(Client)
             self:findNextPriority(3)
 ------------------------------------------------------------------------------------------------------------------------------
     end
+    */
 end
 
 
