@@ -22,6 +22,39 @@ function Plugin:Notify( Player, Message, Format, ... )
 end
 
 
+Shine.Hook.SetupClassHook( "Gamerules", "GetCanJoinPlayingTeam", "unBlockForQueue", "Replace" ) --Replace to remove portion
+
+
+--Gamerules unblock the spectator from joining RR if team full so we can use queue
+function Plugin:unBlockForQueue(player)  --Unblock portion for res slot later?
+   --Print("hm?")
+  /*
+    if player:GetIsSpectator() then
+
+        local numClients = Server.GetNumClientsTotal()
+        local numSpecs = Server.GetNumSpectators()
+
+        local numPlayer = numClients - numSpecs
+        local maxPlayers = Server.GetMaxPlayers()
+        local numRes = Server.GetReservedSlotLimit()
+
+        --check for empty player slots excluding reserved slots
+        if numPlayer >= maxPlayers then
+            Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(3), true)
+            return false
+        end
+
+        --check for empty player slots including reserved slots
+        local userId = player:GetSteamId()
+        local hasReservedSlot = GetHasReservedSlotAccess(userId)
+        if numPlayer >= (maxPlayers - numRes) and not hasReservedSlot then
+            Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(3), true)
+            return false
+        end
+    end
+     */
+    return true
+end
 
 function Plugin:CreateCommands()
 
@@ -132,7 +165,7 @@ end
         if num == 1 then
                    for i = 1, #self.marineQueue do
                       local currentPriority = self.marineQueue[i]
-                      Print("currentPriority is %s", currentPriority)
+                      --Print("currentPriority is %s", currentPriority)
                       if currentPriority.steamID ~= -1 and currentPriority.priority < lowestPriority  then
                          lowestPriority = currentPriority.priority
                          toChange = currentPriority
@@ -148,7 +181,7 @@ end
         elseif num== 2 then
                    for i = 1, #self.alienQueue do
                       local currentPriority = self.alienQueue[i]
-                       Print("currentPriority is %s", currentPriority)
+                       --Print("currentPriority is %s", currentPriority)
                       if currentPriority.steamID ~= -1 and currentPriority.priority  < lowestPriority   then
                          lowestPriority = currentPriority.priority
                          toChange = currentPriority
@@ -164,7 +197,7 @@ end
         elseif num == 3 then
                    for i = 1, #self.spectQueue do
                       local currentPriority = self.spectQueue[i]
-                       Print("currentPriority is %s", currentPriority)
+                       --Print("currentPriority is %s", currentPriority)
                       if currentPriority.steamID ~= -1 and currentPriority.priority  < lowestPriority then
                          lowestPriority = currentPriority.priority
                          toChange = currentPriority
@@ -280,6 +313,31 @@ function Plugin:ClientDisconnect(Client)
     if  controlling:GetTeam() == 3 and SpectCount < 6 then
     self:findNextPriority(3)
     end
+    
+
+     /*
+    
+    for i = 1, #self.marineQueue do
+                      local currentPriority = self.marineQueue[i]
+                      if currentPriority.steamID ~= -1 and currentPriority.steamID ==   Client:GetUserId() then
+                      marinePlaceInQueue = marinePlaceInQueue - 1 
+                      alienPlaceInQueue = alienPlaceInQueue - 1
+                      self.alienQueue[index] = { steamID = -1, 9999 }  
+                      end
+                      
+    end
+    
+    for i = 1, #self.alienQueue do
+    
+    end
+    
+      for i = 1, #self.spectQueue do
+    
+    end
+    
+    */
+    
+  
     
       //for loop for each queue going through and matching steamid? feels messy.
       
