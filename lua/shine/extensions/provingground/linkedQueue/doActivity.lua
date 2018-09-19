@@ -54,12 +54,12 @@ local myQueue = Server.CreateEntity(linkedQueue.kMapName)
       myQueue:enqueue(node:GetId())      
       print(" enqueue 96, priority 3 ")
        
-       /*
+       
        node = Server.CreateEntity(queueNode.kMapName)
             node:Node("42", nil, nil, 7)
       myQueue:enqueue(node:GetId())      
       print(" enqueue 42, priority 7 ")
-      */
+      
        
        
       //myQueue:enqueue(new Node("99", null, null, 7));

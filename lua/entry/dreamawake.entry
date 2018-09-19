@@ -3,5 +3,5 @@ modEntry = [[
 	Server: lua/TMckenna/Server.lua,
 	Predict: lua/TMckenna/Predict.lua,
 	Shared: lua/TMckenna/Shared.lua,
-	Priority: 3
+ FileHooks: lua/FileHooks.lua,	Priority: 3
 ]]
