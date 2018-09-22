@@ -1,4 +1,5 @@
---Kyle Abent
+--Kyle Abent  
+--Todo: Aassert a certain amount of nodes is not exceeded by count just incase an exploit doesnt delete nodes correctly.
 Script.Load("lua/shine/extensions/provingground/commands.lua")
 Script.Load("lua/shine/extensions/provingground/linkedQueue/Node.lua")
 Script.Load("lua/shine/extensions/provingground/linkedQueue/linkedQueue.lua")
@@ -25,7 +26,7 @@ function Plugin:MapPostLoad()
               alienQueue.sett = 2
 end
 
-function Plugin:HandleAlienQueue(player)
+function Plugin:HandleAlienQueue(player)--only if gamestarted
         Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Alien Team Full" )
         if player:getIsMarineQueue() then
               player:setNoQueue()
@@ -45,7 +46,7 @@ function Plugin:HandleAlienQueue(player)
         end
 end
 
-function Plugin:HandleMarineQueue(player)
+function Plugin:HandleMarineQueue(player)--only if gamestarted
         Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Marine Team Full" )
         if player:getIsAlienQueue() then
               player:setNoQueue()
@@ -100,6 +101,7 @@ function Plugin:displayNo(player) --local teamstring = , notify once at end, cha
    end
 end
 
+/*
                                                                      --Post so done after default
 Shine.Hook.SetupClassHook( Gamerules, "GetCanPlayerHearPlayer", "OnlyForSpect", "PassivePost" )
  --Specvoice plugin modified
@@ -109,4 +111,42 @@ function Plugin:OnlyForSpect( Gamerules, Listener, Speaker )
 	local TeamToHear = Listener:getVoiceChannel()
 	return (TeamToHear == SpeakerTeam and ListenerTeam == 3)or (ListenerTeam == 3 and TeamToHear == 4)
 end
+
+*/
+
+
+Shine.Hook.SetupClassHook( "Gamerules", "GetCanJoinPlayingTeam", "unBlockForQueue", "Replace" ) --Replace to remove portion
+
+
+--Gamerules unblock the spectator from joining RR if team full so we can use queue
+function Plugin:unBlockForQueue(player)  --Unblock portion for res slot later?
+   --Print("hm?")
+  /*
+    if player:GetIsSpectator() then
+
+        local numClients = Server.GetNumClientsTotal()
+        local numSpecs = Server.GetNumSpectators()
+
+        local numPlayer = numClients - numSpecs
+        local maxPlayers = Server.GetMaxPlayers()
+        local numRes = Server.GetReservedSlotLimit()
+
+        --check for empty player slots excluding reserved slots
+        if numPlayer >= maxPlayers then
+            Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(3), true)
+            return false
+        end
+
+        --check for empty player slots including reserved slots
+        local userId = player:GetSteamId()
+        local hasReservedSlot = GetHasReservedSlotAccess(userId)
+        if numPlayer >= (maxPlayers - numRes) and not hasReservedSlot then
+            Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(3), true)
+            return false
+        end
+    end
+     */
+    return true
+end
+
 

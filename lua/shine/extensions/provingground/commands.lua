@@ -54,7 +54,7 @@ end
 		local TeamString = "invalid"
         local Player = Client:GetControllingPlayer()
               if not Player:GetTeamNumber() == 3 then 
-                Shine:NotifyDualColour( nil, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You must be a spectator " )
+                Shine:NotifyDualColour( Player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You must be a spectator " )
               return 
               end
 		if (Team == 1) then
@@ -68,9 +68,9 @@ end
 		end
 
 		if (TeamString == "invalid") then
-		   Shine:NotifyDualColour( nil, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Invalid option"..Team.." Valid options are: 1, 2, 3, 4" )
+		   Shine:NotifyDualColour( Player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Invalid option"..Team.." Valid options are: 1, 2, 3, 4" )
 		else
-		   Shine:NotifyDualColour( nil, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Now listening to "..TeamString.." while on spectator team " )
+		   Shine:NotifyDualColour( Player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Now listening to "..TeamString.." while on spectator team " )
 			Player:setVoiceChannel(Team)
 		end
 

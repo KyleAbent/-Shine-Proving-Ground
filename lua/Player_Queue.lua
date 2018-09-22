@@ -1,4 +1,5 @@
 --Because I would rather not add a for loop of everyone in queue checking for one player in queue when i can just add these options
+--Could be better as readyroomplayer. Just gotta see how to have spectator copy settings over.
 local networkVars = 
 
 { 
@@ -39,6 +40,16 @@ end
 function Player:getQueue()
 return self.queueTeam
 end
+
+  if Server then
+
+    local orig = Player.CopyPlayerDataFrom
+    function Player:CopyPlayerDataFrom(player)
+    orig(self, player)
+    self.queueTeam = player.queueTeam
+    end
+
+  end
 
 
 Shared.LinkClassToMap("Player", Player.kMapName, networkVars)
