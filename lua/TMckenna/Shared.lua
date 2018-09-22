@@ -5,7 +5,7 @@ Script.Load("lua/getSharedNode.lua")
 function GetMarineQueue() 
 
         for index, queue in ientitylist(Shared.GetEntitiesWithClassname("linkedQueue")) do
-              if queue.teamNum == 1 then 
+              if queue.sett == 1 then 
                  return queue
               end
         end
@@ -15,7 +15,7 @@ end
 
 function GetAlienQueue() 
         for index, queue in ientitylist(Shared.GetEntitiesWithClassname("linkedQueue")) do
-              if queue.teamNum == 2 then 
+              if queue.sett == 2 then 
                  return queue
               end
         end

@@ -54,9 +54,9 @@ end
 
 function Plugin:MapPostLoad()
         local marineQueue = Server.CreateEntity(linkedQueue.kMapName)
-              marineQueue.teamNum = 1
+              marineQueue.sett = 1
         local alienQueue = Server.CreateEntity(linkedQueue.kMapName)
-              alienQueue.teamNum = 2
+              alienQueue.sett = 2
 end
 
 
@@ -84,21 +84,23 @@ function Plugin:JoinTeam(gamerules, player, newteam, force, ShineForce)
     end
     */
     
-    if newteam == 2 and  AlienCount >= 12 or AlienCount > MarineCount  then
+    if newteam == 2 and ( AlienCount >= 12 or AlienCount > MarineCount ) then
         Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Alien Team Full" )
         local aq = GetAlienQueue() --if ~= null then
         local node = Server.CreateEntity(queueNode.kMapName) 
           --    node:Node( ToString(player:GetClient():GetUserId()) , nil, nil, aq.size+1)
               node:Node( ToString(player:GetId()) , nil, nil, aq.size+1)
+              Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've entered the Alien Queue at priority # " .. aq.size+1 )
               aq:enqueue(node:GetId())   
               aq:print()
     return false
-    elseif newteam == 1 and  MarineCount >= 12 or AlienCount < MarineCount  then
+    elseif newteam == 1 and  ( MarineCount >= 12 or AlienCount < MarineCount  ) then
         Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Marine Team Full" )
         local mq = GetMarineQueue() --if ~= null then
         local node = Server.CreateEntity(queueNode.kMapName) 
             --  node:Node( ToString(player:GetClient():GetUserId()) , nil, nil, mq.size+1)
               node:Node( ToString(player:GetId()) , nil, nil, mq.size+1)
+              Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've entered the Marine Queue at priority # " .. mq.size+1 )
               mq:enqueue(node:GetId())   
               mq:print()
     return false

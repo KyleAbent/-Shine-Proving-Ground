@@ -8,7 +8,7 @@
 {
     front = "private entityid",
     back = "private entityid",
-    teamNum = "integer",
+    sett = "integer",
     size = "integer",
 }
 
@@ -16,7 +16,7 @@ function linkedQueue:OnCreate()
        if Server then
      self.front = Entity.invalidI 
      self.back = Entity.invalidI 
-     self.teamNum = -1
+     self.sett = -1
      self.size = 0
      end
 end
@@ -38,8 +38,8 @@ end
          print("Empty" )
          return
       else
-      print(   string.format("Back  is %s", Shared.GetEntity(self.back) )  )
-      print(  string.format("Front  is %s",  Shared.GetEntity(self.front) ) )
+     -- print(   string.format("Back  is %s", Shared.GetEntity(self.back) )  )
+      --print(  string.format("Front  is %s",  Shared.GetEntity(self.front) ) )
       end
       self.size = self.size + 1
      local current = Shared.GetEntity(self.back)
@@ -62,7 +62,7 @@ end
                    //Tougher implementation, nested loop, moving between from left to right if valid position, moving index pos for priority check
          while(current ~= Shared.GetEntity(self.front) and Shared.GetEntity(current:getNextNode()):getPriority() < Shared.GetEntity(newEntry):getPriority() )  do
             current = Shared.GetEntity(current:getNextNode()) //could error?
-              -- print("test 2")
+              --  print("test 2")
         end
                   //From left to right if priority fits into this place then adjust accordingly
          if (Shared.GetEntity(newEntry):getPriority() > current:getPriority() ) then
@@ -79,12 +79,11 @@ end
             current:setNextNode(newEntry)          
             Shared.GetEntity(newEntry):setPrevNode(current)
             hasPrioritized = true
-                -- print("test 3")
+             --     print("test 3")
         end
                   
-         if (current ~= self.front) then
+         if (current ~= Shared.GetEntity(self.front)) then
             current = current:getNextNode() //could error?
-         
          else
             hasPrioritized = true//although false. No other areas to check. Hm.
           --  self.size = self.size + 1
@@ -101,25 +100,36 @@ end
       print("~~~~~~~~~~~~~~~~~~~~~~~~" )
       print("LinkedQueue myQueue dequeue()" )
       print("~~~~~~~~~~~~~~~~~~~~~~~~" )
-      if(self:isEmpty()) then
+      if self:isEmpty() then
          return false --"queue is empty, cannot deque"
        end  
        //else}
       local tempNode = self.front
       self.front = Shared.GetEntity(self.front):getPrevNode()
         
-      if (self.front == Entity.invalidI) then
+      if (self.front == Entity.invalidI or self.front == 0) then
          self.back = Entity.invalidI
          self.size = 0 --hm?
-         return tempNode
+         --if player exists else disconnect and remove from que and dequeue again
+         local Gamerules = GetGamerules()
+         Gamerules:JoinTeam( Shared.GetEntity(Shared.GetEntity(tempNode):getData() ) , self.sett, nil, true )
+         Shine:NotifyDualColour( Shared.GetEntity(Shared.GetEntity(tempNode):getData() ), 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been placed on a team" )
+         self.size = self.size - 1
+         DestroyEntity(tempNode)
+         Print("Destroyed Node")
+        -- return tempNode for testing
       else
          Shared.GetEntity(self.front):setNextNode(Entity.invalidI)
        end
        self.size = self.size - 1
+       --if player exists else disconnect and remove from que and dequeue again
        local Gamerules = GetGamerules()
-       Gamerules:JoinTeam( Shared.GetEntity(Shared.GetEntity(tempNode):getData()) , self.teamNum, nil, true )
-       --Shared.ConsoleCommand( string.format("sh_queueteam %s %s",Shared.GetEntity(tempNode):getData(), self.teamNum ))  --if not disconnected hm :o
-      return tempNode
+       Gamerules:JoinTeam( Shared.GetEntity(Shared.GetEntity(tempNode):getData()) , self.sett, nil, true )
+         DestroyEntity(tempNode)
+         Print("Destroyed Node")
+         Shine:NotifyDualColour( Shared.GetEntity(Shared.GetEntity(tempNode):getData() ), 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been placed on a team" )
+       --Shared.ConsoleCommand( string.format("sh_queueteam %s %s",Shared.GetEntity(tempNode):getData(), self.sett ))  --if not disconnected hm :o
+     -- return tempNode for testing
   end
  
   //insertFront   // inserts a new integer at the front of the dequeue
@@ -173,7 +183,7 @@ end
                  print("test 3")
        end
                   
-         if (current ~= self.back) then
+         if (current ~= Shared.GetEntity(self.back)) then
             current = current:getPrevNode() //could error?
          else
             hasPrioritized = true//although false. No other areas to check. Hm.
@@ -196,20 +206,22 @@ end
       if (self.back == Entity.invalidI) then
          self.front = Entity.invalidI
          self.size = 0
-         return tempNode
+          DestroyEntity(tempNode)
+         --return tempNode for testing
       else
           Shared.GetEntity(self.back):setPrevNode(Entity.invalidI)
       end
           self.size = self.size - 1
-      return tempNode
+           DestroyEntity(tempNode)
+      --return tempNode for testing
    end
 
    function linkedQueue:isEmpty()     
-      if Shared.GetEntity(self.front) == nil then
-       --  Print("Is Empty")
+      if self.front == 0 or self.front == Entity.invalidI then
+         --Print("Is Empty")
          return true
       end
-       --Print("Is not Empty")
+       Print("Is not Empty")
       return false
    end
 
