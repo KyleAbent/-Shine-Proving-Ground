@@ -1,0 +1,7 @@
+modEntry = [[
+	Client: lua/TMckenna/Client.lua,
+	Server: lua/TMckenna/Server.lua,
+	Predict: lua/TMckenna/Predict.lua,
+	Shared: lua/TMckenna/Shared.lua,
+ FileHooks: lua/FileHooks.lua,	Priority: 3
+]]
