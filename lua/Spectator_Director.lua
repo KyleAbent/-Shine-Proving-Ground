@@ -56,6 +56,8 @@ function Spectator:LockAngles()//if cam then look for lock
              local angles = Angles(GetPitchFromVector(dir), GetYawFromVector(dir), 0)
              self:SetOffsetAngles(angles)
            -- end
+  else
+       self:ChangeView(self)
   end
 end
 
@@ -83,6 +85,7 @@ end
 local origo = Spectator.OverrideInput
 function Spectator:OverrideInput(input)
    origo (self, input)
+    if not self.isDirecting then return input end
           if  self:GetSpectatorMode() ~= kSpectatorMode.FirstPerson and self.lockedId ~= Entity.invalidI then
             local target = Shared.GetEntity( self.lockedId ) 
               if target  then

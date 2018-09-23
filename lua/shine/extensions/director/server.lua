@@ -249,7 +249,7 @@ end
       -- client.SendNetworkMessage("SwitchFromFirstPersonSpectate", { mode = kSpectatorMode.Following })
         
         if not client then return end
-        local rand = math.random(1,3)
+        local rand = math.random(1,4)
         local vip = nil
         
         if rand == 1 then
@@ -258,14 +258,14 @@ end
          vip = GetViewTwo()
         elseif rand == 3 then
          vip = GetViewThree()
-         --elseif rand == 4 then
-         --firstPersonScoreBased(self, client)
+         elseif rand == 4 then
+         firstPersonScoreBased(self, client)
          end
        
         if vip == nil then vip = GetViewOne() end
         if vip == nil then vip = GetViewTwo() end
         if vip == nil then vip = GetViewThree() end
-       -- if vip == nil then firstPersonScoreBased(self, client) end
+        if vip == nil then firstPersonScoreBased(self, client) end
    
         if vip ~= nil then 
               overHeadandNear(self, client, vip)
