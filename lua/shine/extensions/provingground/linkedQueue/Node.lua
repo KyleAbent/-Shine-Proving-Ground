@@ -4,10 +4,11 @@
 
    local networkVars = 
 {
-    data = "private string (256)", --steamid?
+    data = "private string (256)", --USER ID changes when going from player to spectator.
     priority = "private integer",
     nextNode = "private entityid",
     prevNode = "private entityid",
+    --steamID = "private string (256)", -- No use because if i cant get shared entitiy data then i cant get steamid
 }
 function queueNode:OnCreate()
      Print("Node created") 

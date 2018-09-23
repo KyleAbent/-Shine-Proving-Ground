@@ -1,5 +1,34 @@
 function Plugin:CreateCommands()
 
+local function JoinQueue(Client, Number)
+   local Player = Client:GetControllingPlayer()
+   if Player:GetTeamNumber() ~= 3 then
+     Shine:NotifyDualColour( Player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "This is intended for spectator who doesn't want to step out of line when switching from RR to SPECT" )
+     return
+   end
+     
+   if Number == 1 then
+     if   GetGamerules():GetTeam1():GetNumPlayers() >= self.Config.kTeamCapSize then
+     self:HandleMarineQueue(Player)
+     else
+     Shine:NotifyDualColour( Player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Team Size must be current limit which is " .. self.Config.kTeamCapSize  )
+     end
+   elseif Number == 2 then
+     if   GetGamerules():GetTeam2():GetNumPlayers() >= self.Config.kTeamCapSize then
+     self:HandleAlienQueue(Player)
+     else
+     Shine:NotifyDualColour( Player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Team Size must be current limit which is " .. self.Config.kTeamCapSize  )
+     end
+   end
+   
+end
+
+
+	local JoinQueueQueueCommand = self:BindCommand( "sh_joinqueue", "joinqueue" , JoinQueue, true )
+		JoinQueueQueueCommand:AddParam{ Type = "number" }
+    JoinQueueQueueCommand:Help( "leave team queue" )
+    
+    
 local function LeaveQueue(Client)
    local Player = Client:GetControllingPlayer()
    Player:setNoQueue(Player)
@@ -7,11 +36,15 @@ end
 
 
 	local LeaveTeamQueueCommand = self:BindCommand( "sh_leavequeue", "leavequeue" , LeaveQueue, true )
-    LeaveTeamQueueCommand:Help( "leave team queue" )
+
     
-local function TeamCap(Client, Number)
+local function TeamCap(Client, Number)--Assert Number <= 12
   self.Config.kTeamCapSize = Number
   Shine:NotifyDualColour( nil, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Team Cap Size has been changed to " .. Number )
+  Shine:NotifyDualColour( nil, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "If Team Queue is enabled then it will apply to team queue size requirement (Default 12)" )
+  --SetTeamJoinMaxTeamSize(Number)
+  GetMarineTeamJoin():setMaxTeamSize(Number)
+  GetAlienTeamJoin():setMaxTeamSize(Number)
 end
 
 

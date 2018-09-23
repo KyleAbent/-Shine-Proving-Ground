@@ -1,23 +1,22 @@
 --Kyle Abent
 --Aditional camera angles that come as an option to enhance the spectator experience
--- choppyness is from not using onupdateplayer
+--It's impossible to see everything with a manual camera. This helps to see things that may go missing otherwise
+--The reason why I'm having a child class of spectator is so I can easily update the camera angles without networkvar lag
+-- This is non game altering in that gameplay is not effecting. The only way this is effecting gameplay is by improving
+-- the spectator experience and grasping more calculations based on a changed view angle. You're more likely to get
+-- a spectator to use chat to talk to the rest of the world.
 
 local networkVars = 
 
 {
   voiceChannel = "integer",  --Specvoice plugin modified
-  isDirecting = "boolean",
-  lockedId = "entityid", --for directing. I dont wanna mess with vanilla target. eh?
-  --if directing then non null
 } 
 
 local cCreate = Spectator.OnCreate
 function Spectator:OnCreate()
     cCreate(self)
     self.voiceChannel = 4  --Specvoice plugin modified
-    self.isDirecting = false
-     self.lockedId = Entity.invalidI 
-    --Print("%s %s", self:GetId(), self:getQueue() )
+    Print("%s %s", self:GetId(), self:getQueue() )
 end
 
 function Spectator:setVoiceChannel(channel)
@@ -28,26 +27,50 @@ function Spectator:getVoiceChannel()
  return self.voiceChannel   --Specvoice plugin modified
 end
 
-function Spectator:ChangeView(player)
+
+Shared.LinkClassToMap("Spectator", Spectator.kMapName, networkVars)
+
+
+
+
+
+class 'SpectateDirector' (Spectator)
+SpectateDirector.kMapName = "Director"
+
+
+local networkVars = 
+
+{
+  lockedId = "entityid", --for directing. I dont wanna mess with vanilla target. eh?
+} 
+
+
+function SpectateDirector:OnCreate()
+    Spectator.OnCreate(self)
+    self.lockedId = Entity.invalidI  --if directing then non null
+   
+end
+
+
+function SpectateDirector:ChangeView(player)
   --shine
 end
-function Spectator:SetLockOnTarget(userid)
+function SpectateDirector:SetLockOnTarget(userid)
    self.lockedId = userid
 end
 
-function Spectator:OnUpdatePlayer(deltatime)
+function SpectateDirector:OnUpdatePlayer(deltatime)
     if Server then
-    if self.isDirecting then
        if not  self.timeLastDirectUpdate or ( self.timeLastDirectUpdate + 8 < Shared.GetTime()  or  self.lockedId == 0  ) then
          self:ChangeView(self)
           self.timeLastDirectUpdate = Shared.GetTime()
         end
        self:LockAngles()
      end  
-    end
+    
 end
 
-function Spectator:LockAngles()//if cam then look for lock
+function SpectateDirector:LockAngles()//if cam then look for lock
   -- if self:GetSpectatorMode() == kSpectatorMode.FirstPerson then return end
   local OfLock = Shared.GetEntity( self.lockedId ) 
    if OfLock ~= nil then
@@ -59,7 +82,7 @@ function Spectator:LockAngles()//if cam then look for lock
   end
 end
 
-function Spectator:BreakChains()
+function SpectateDirector:BreakChains()
   self.lockedId = Entity.invalidI 
 end
 
@@ -80,9 +103,8 @@ local dist = 5
   
 end
 
-local origo = Spectator.OverrideInput
-function Spectator:OverrideInput(input)
-   origo (self, input)
+function SpectateDirector:OverrideInput(input)
+   Spectator.OverrideInput(self, input)
           if  self:GetSpectatorMode() ~= kSpectatorMode.FirstPerson and self.lockedId ~= Entity.invalidI then
             local target = Shared.GetEntity( self.lockedId ) 
               if target  then
@@ -120,5 +142,5 @@ end
 
 
 
-Shared.LinkClassToMap("Spectator", Spectator.kMapName, networkVars)
+Shared.LinkClassToMap("SpectateDirector", SpectateDirector.kMapName, networkVars)
 

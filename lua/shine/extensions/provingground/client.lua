@@ -27,7 +27,22 @@ end
 		end )
 	end )
 
+	Shine.VoteMenu:EditPage( "TeamQueue", function( self )
+		self:AddSideButton( "Join Marine Queue", function()
+			Shared.ConsoleCommand( "sh_joinqueue 1" )
+			self:SetPage( "Main" )
+			self:SetIsVisible( false )
+		end )
+	end )
 
+	Shine.VoteMenu:EditPage( "TeamQueue", function( self )
+		self:AddSideButton( "Join Alien Queue", function()
+			Shared.ConsoleCommand( "sh_joinqueue 2" )
+			self:SetPage( "Main" )
+			self:SetIsVisible( false )
+		end )
+	end )
+		
 	Shine.VoteMenu:AddPage( "Director", function( self )
 		self:AddTopButton( "Back", function()
 			self:SetPage( "Proving Ground" )
@@ -35,11 +50,11 @@ end
 	end )
 
 	Shine.VoteMenu:EditPage( "Director", function( self )
-		self:AddSideButton( "Enable Director", function()
+		self:AddSideButton( "Toggle Director", function()
 		--	Shared.ConsoleCommand( "sh_specvoice 1" )
-		    local player = Client.GetLocalPlayer()
+		    --local player = Client.GetLocalPlayer()
 		   -- player:setNoQueue(player)
-		   -- Shared.ConsoleCommand( "sh_direct" )
+		      Shared.ConsoleCommand( "sh_direct" )
 			--self:SetPage( "Main" )
 			--self:SetIsVisible( false )
 		end )
@@ -50,13 +65,14 @@ end
 		self:AddTopButton( "Back", function()
 			self:SetPage( "Main" )
 		end )
-
+    
 	Shine.VoteMenu:AddPage( "Spec Voice", function( self )
 		self:AddTopButton( "Back", function()
 			self:SetPage( "Proving Ground" )
 		end )
 	end )
-
+   
+   /*
 	Shine.VoteMenu:EditPage( "Spec Voice", function( self )
 		self:AddSideButton( "Marines Only", function()
 			Shared.ConsoleCommand( "sh_specvoice 1" )
@@ -81,8 +97,11 @@ end
 			self:SetPage( "Main" )
 			self:SetIsVisible( false )
 		end )
+		
+		
+		
 	end )
-	
+	*/
 	
 	self:AddSideButton( "Contact Admin", function()
 			self:SetPage( "Main" )

@@ -22,7 +22,7 @@ function linkedQueue:OnCreate()
 end
 
 function linkedQueue:GetIsMapEntity()
-return true
+return true --onreset destroy each node!
 end
   function linkedQueue:enqueue(newEntry)
    --   print("newEntry is " + newEntry )
@@ -113,10 +113,10 @@ end
          --if player exists else disconnect and remove from que and dequeue again
          local player = Shared.GetEntity(Shared.GetEntity(tempNode):getData())
          --Print(Shared.GetEntity(hm))
-         if player and player:getQueue() == self.sett then
+         if player and player:getQueue() == self.sett then --Switching RR to SPECt makes this null without workaround
          local Gamerules = GetGamerules()
          Gamerules:JoinTeam( player  , self.sett, nil, true )
-         Shine:NotifyDualColour( Shared.GetEntity(Shared.GetEntity(tempNode):getData()), 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been placed on a team" )
+        -- Shine:NotifyDualColour( Shared.GetEntity(Shared.GetEntity(tempNode):getData()), 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been placed on a team" )
          end
          --self.size = self.size - 1
          DestroyEntity(Shared.GetEntity(tempNode))
@@ -128,11 +128,11 @@ end
        end
        self.size = self.size - 1
        --if player exists else disconnect and remove from que and dequeue again
-         local player = Shared.GetEntity(Shared.GetEntity(tempNode):getData())
+         local player = Shared.GetEntity(Shared.GetEntity(tempNode):getData()) --Switching RR to SPECt makes this null without workaround
          if player and player:getQueue() == self.sett   then
          local Gamerules = GetGamerules()
          Gamerules:JoinTeam( Shared.GetEntity(Shared.GetEntity(tempNode):getData()) , self.sett, nil, true )
-         Shine:NotifyDualColour( Shared.GetEntity(Shared.GetEntity(tempNode):getData()), 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been placed on a team" )
+--         Shine:NotifyDualColour( Shared.GetEntity(Shared.GetEntity(tempNode):getData()), 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been placed on a team" )
          end
          DestroyEntity(Shared.GetEntity(tempNode))
          Print("Destroyed Node")

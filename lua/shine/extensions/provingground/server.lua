@@ -15,7 +15,8 @@ Plugin.DefaultConfig  = { kTeamCapSize = 12, kTeamQueueEnabled = false }
 
 function Plugin:Initialise()
 	self.Enabled = true
-	self:CreateCommands()
+	self:CreateCommands() 
+	--self.backupqueue = {} --self.backupqueue[client:GetUserId()] = {priority = priority} -- this way it's a workaround. search this.
 	return true
 end
 
@@ -65,26 +66,54 @@ function Plugin:HandleMarineQueue(player)--only if gamestarted
               Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've already entered the Marine Team Queue" )
         end
 end
+
+ -- RR to spec loses spot
+function Plugin:HandleStepOutOfLineAddToBack(player)
+
+    
+     if player:getIsAlienQueue() then
+              Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "By switching from RR to Specate, you stepped out of line and you are now in the back of the line." )
+              Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Next time, try joining the team queue while spectating so you don't lose your place." )
+              Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "M>Proving Ground>TeamQueue>Your team of choice" )
+              player:setNoQueue()
+     elseif player:getIsMarineQueue() then
+              Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "By switching from RR to Specate, you stepped out of line and you are now in the back of the line." )
+              Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "Next time, try joining the team queue while spectating so you don't lose your place." )
+              Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "M>Proving Ground>TeamQueue>Your team of choice" )
+              player:setNoQueue()
+     end
+     
+    
+     
+
+end
+
+
 function Plugin:JoinTeam(gamerules, player, newteam, force, ShineForce)
    -- if ShineForce or newteam == kSpectatorIndex or newteam == kTeamReadyRoom then return end
 
     local AlienCount = gamerules:GetTeam2():GetNumPlayers()
-    local MarineCount = gamerules:GetTeam1():GetNumPlayers()
+    local MarineCount = gamerules:GetTeam1():GetNumPlayers() --team1.isFull
+    --if not gamerules:GetGameStarted() then return end -- avoid shuffle
     
     if newteam == 2 then 
-                if self.Config.kTeamQueueEnabled and ( AlienCount >= self.Config.kTeamCapSize   or AlienCount > MarineCount ) then
+                if self.Config.kTeamQueueEnabled and ( AlienCount >= self.Config.kTeamCapSize ) then --or MarineCount < AlienCount ) then
                    self:HandleAlienQueue(player)
                     return false
                 else
                    player:setNoQueue()
                 end
     elseif newteam == 1 then
-                  if self.Config.kTeamQueueEnabled and ( MarineCount >= self.Config.kTeamCapSize   or AlienCount < MarineCount  ) then
+                  if self.Config.kTeamQueueEnabled and ( MarineCount >= self.Config.kTeamCapSize ) then -- or MarineCount > AlienCount  ) then
                     self:HandleMarineQueue(player)
                     return false
                   else
                      player:setNoQueue()
                   end
+    elseif newteam == 3 then
+                if self.Config.kTeamQueueEnabled then
+                   self:HandleStepOutOfLineAddToBack(player)
+                end
     end
 end
 
@@ -97,7 +126,7 @@ function Plugin:displayNo(player) --local teamstring = , notify once at end, cha
    elseif player:getIsAlienQueue() then
    Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You've been removed from Alien Team Queue" )
    else
-   Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You're not currently on a Team Queue" )
+--   Shine:NotifyDualColour( player, 0, 255, 0, "[Proving Ground]", 255, 255, 255, "You're not currently on a Team Queue" )
    end
 end
 
@@ -115,38 +144,7 @@ end
 */
 
 
-Shine.Hook.SetupClassHook( "Gamerules", "GetCanJoinPlayingTeam", "unBlockForQueue", "Replace" ) --Replace to remove portion
 
 
---Gamerules unblock the spectator from joining RR if team full so we can use queue
-function Plugin:unBlockForQueue(player)  --Unblock portion for res slot later?
-   --Print("hm?")
-  /*
-    if player:GetIsSpectator() then
-
-        local numClients = Server.GetNumClientsTotal()
-        local numSpecs = Server.GetNumSpectators()
-
-        local numPlayer = numClients - numSpecs
-        local maxPlayers = Server.GetMaxPlayers()
-        local numRes = Server.GetReservedSlotLimit()
-
-        --check for empty player slots excluding reserved slots
-        if numPlayer >= maxPlayers then
-            Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(3), true)
-            return false
-        end
-
-        --check for empty player slots including reserved slots
-        local userId = player:GetSteamId()
-        local hasReservedSlot = GetHasReservedSlotAccess(userId)
-        if numPlayer >= (maxPlayers - numRes) and not hasReservedSlot then
-            Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(3), true)
-            return false
-        end
-    end
-     */
-    return true
-end
 
 
