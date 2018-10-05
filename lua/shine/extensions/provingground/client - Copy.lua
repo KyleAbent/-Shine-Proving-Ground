@@ -12,7 +12,7 @@ end
 
 	
 	
-	Shine.VoteMenu:AddPage( "Proving Grounds", function( self )
+	Shine.VoteMenu:AddPage( "Proving Ground", function( self )
 		self:AddTopButton( "Back", function()
 			self:SetPage( "Main" )
 		end )
@@ -84,8 +84,8 @@ end
 		
 		 local player = Client.GetLocalPlayer()
 		  -- if player:GetTeamNumber() == 3 then 
-		self:AddSideButton( "Spectator", function()
-			self:SetPage( "Spectator" )
+		self:AddSideButton( "Director", function()
+			self:SetPage( "Director" )
 		end )
 		
 		/*
@@ -104,7 +104,7 @@ end
 
 	Shine.VoteMenu:EditPage( "Main", function( self )
 		self:AddSideButton( "Proving Ground", function()
-			self:SetPage( "Proving Grounds" )
+			self:SetPage( "Proving Ground" )
 		end )
 
 	end )	

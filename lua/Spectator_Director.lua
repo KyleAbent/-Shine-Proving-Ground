@@ -15,7 +15,7 @@ local cCreate = Spectator.OnCreate
 function Spectator:OnCreate()
     cCreate(self)
     self.voiceChannel = 4  --Specvoice plugin modified
-    self.isDirecting = false
+    self.isDirecting = false -- if server?
      self.lockedId = Entity.invalidI 
     --Print("%s %s", self:GetId(), self:getQueue() )
 end

@@ -286,12 +286,26 @@ function Plugin:CreateCommands()
 
 local function Direct( Client )
     local Player = Client:GetControllingPlayer()
+    if Player:GetSpectatorMode() ~= kSpectatorMode.FreeLook then Player:SetSpectatorMode(kSpectatorMode.FreeLook)  end
          if Player:GetTeamNumber() == 3 then
-                   Player.isDirecting = not Player.isDirecting
+                   --Player.isDirecting = not Player.isDirecting
+                   Player:SetFollowMoveEnabled( not Player:getFME() )
+                   self:NotifyGeneric( Client, "Director Boolean is now %s ", true, Player:getFME() )
           end
 end
 
 local DirectCommand = self:BindCommand( "sh_direct", "direct", Direct, true)
+
+local function Director_Intervals( Client, Number )
+    local Player = Client:GetControllingPlayer()
+         if Player:GetTeamNumber() == 3 then
+                   Player:setIntervals(Number)
+                   self:NotifyGeneric( Client, "Intervals delay is now %s", true, Number )
+          end
+end
+
+local DirectIntervalsCommand = self:BindCommand( "sh_director_intervals", "director_intervals", Director_Intervals, true)
+DirectIntervalsCommand:AddParam{ Type = "number", Min = 8, Max = 32, Round = true, Optional = false, Default = 8 }
 
 
 
